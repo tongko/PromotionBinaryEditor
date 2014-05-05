@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1003D794-E241-4BF0-AEB1-8F41D78C8994}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{7F0F2398-30A8-45BE-8A89-B94227F3C693}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BinEdit.Controls</RootNamespace>
-    <AssemblyName>Controls</AssemblyName>
+    <RootNamespace>TestUserControl</RootNamespace>
+    <AssemblyName>TestUserControl</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,87 +35,55 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeviceContextValues.cs" />
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="ToolWindow.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ToolWindow.Designer.cs">
-      <DependentUpon>ToolWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ToolWindowCaption.cs" />
-    <Compile Include="ToolWindowCaptionButton.cs" />
-  </ItemGroup>
-  <ItemGroup>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ToolWindow.resx">
-      <DependentUpon>ToolWindow.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ToolCaptionPin.png" />
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ToolCaptionPinHover.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionCloseHover.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionClose.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionContextHover.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionContextFocus.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionPinFocus.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionCloseFocus.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionContextFocusHover.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionPinFocusHover.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionCloseFocusHover.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionHandle.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionHandleFocus.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionContextChecked.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionPinChecked.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ToolCaptionCloseChecked.png" />
+    <ProjectReference Include="..\Controls\Controls.csproj">
+      <Project>{1003d794-e241-4bf0-aeb1-8f41d78c8994}</Project>
+      <Name>Controls</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

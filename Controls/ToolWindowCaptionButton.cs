@@ -11,17 +11,20 @@ namespace BinEdit.Controls
 
 	public class ToolWindowCaptionButton
 	{
+		private Rectangle _bounds;
+
 		public ToolWindowCaptionButton(ToolWindow parent, CaptionButtonType buttonType)
 		{
 			Parent = parent;
 			ButtonType = buttonType;
+			_bounds = Rectangle.Empty;
 		}
 
 		public CaptionButtonType ButtonType { get; private set; }
 
 		public ToolWindow Parent { get; set; }
 
-		public Rectangle Bounds { get; set; }
+		public Rectangle Bounds { get { return _bounds; } }
 
 		public bool Highlight { get; set; }
 
@@ -40,14 +43,17 @@ namespace BinEdit.Controls
 		///		3		Focus Highlighted - Image Highlighted + parent focus
 		///		4		Checked - Image for checked state.
 		/// </summary>
-		public Bitmap[] ImageList { get; set; }
+		public Image[] ImageList { get; set; }
 
-		public bool ContainsPoint(Point point)
+		public virtual void SetBounds(int left, int top, int width, int height)
 		{
-			return Bounds.Contains(point);
+			_bounds.X = left;
+			_bounds.Y = top;
+			_bounds.Width = width;
+			_bounds.Height = height;
 		}
 
-		public virtual Bitmap GetImage()
+		public virtual Image GetImage()
 		{
 			if (ImageList == null || ImageList.Length != 5)
 				return null;

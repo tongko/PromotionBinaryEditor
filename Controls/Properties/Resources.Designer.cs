@@ -73,6 +73,16 @@ namespace BinEdit.Controls.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ToolCaptionCloseChecked {
+            get {
+                object obj = ResourceManager.GetObject("ToolCaptionCloseChecked", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ToolCaptionCloseFocus {
             get {
                 object obj = ResourceManager.GetObject("ToolCaptionCloseFocus", resourceCulture);
@@ -106,6 +116,16 @@ namespace BinEdit.Controls.Properties {
         internal static System.Drawing.Bitmap ToolCaptionContext {
             get {
                 object obj = ResourceManager.GetObject("ToolCaptionContext", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ToolCaptionContextChecked {
+            get {
+                object obj = ResourceManager.GetObject("ToolCaptionContextChecked", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -166,6 +186,16 @@ namespace BinEdit.Controls.Properties {
         internal static System.Drawing.Bitmap ToolCaptionPin {
             get {
                 object obj = ResourceManager.GetObject("ToolCaptionPin", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ToolCaptionPinChecked {
+            get {
+                object obj = ResourceManager.GetObject("ToolCaptionPinChecked", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

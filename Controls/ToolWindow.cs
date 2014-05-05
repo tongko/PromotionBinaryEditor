@@ -1,6 +1,5 @@
 ﻿using BinEdit.Controls.Properties;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -10,61 +9,41 @@ namespace BinEdit.Controls
 {
 	public partial class ToolWindow : UserControl
 	{
-		private const int CaptionHeight = 21;
-		private const int LeftMargin = 5;
-		private const int RightMargin = LeftMargin * 2;
-		private static readonly Font CaptionFont = new Font("Segoe UI", 8, FontStyle.Regular, GraphicsUnit.Pixel);
 		private static readonly Pen BorderPen = new Pen(Color.FromArgb(204, 206, 219));
-		private static readonly Brush BrushBackground = new SolidBrush(Color.FromArgb(238, 238, 242));
-		private static readonly Brush BrushBackgroundFocus = new SolidBrush(Color.FromArgb(0, 122, 204));
-		private static readonly Brush BrushForeground = new SolidBrush(Color.Black);
-		private static readonly Brush BrushForegroundForcus = new SolidBrush(Color.White);
 		private const int WmNcPaint = 0x85;
+		private const int WmNcHitTest = 0x0084;
+		private const int HtError = -2;
+		private const int HtTransparent = -1;
+		private const int HtNowhere = 0;
+		private const int HtClient = 1;
+		private const int HtCaption = 2;
+		private const int HtSysmenu = 3;
+		private const int HtGrowBox = 4;
+		private const int HtMenu = 5;
+		private const int HtHScroll = 6;
+		private const int HtVScroll = 7;
+		private const int HtLeft = 10;
+		private const int HtRight = 11;
+		private const int HtTop = 12;
+		private const int HtTopLeft = 13;
+		private const int HtTopTight = 14;
+		private const int HtBottom = 15;
+		private const int HtBottomLeft = 16;
+		private const int HtBottomRight = 17;
+		private const int HtBorder = 18;
+		private const int HtObject = 19;
+		private const int HtClose = 20;
+		private const int HtHelp = 21;
 
-		private const int HandleImg = 0;
-		private const int HandleFocus = 1;
-		private const int Context = 2;
-		private const int ContextHover = 3;
-		private const int ContextFocus = 4;
-		private const int ContextFocusHover = 5;
-		private const int Pin = 6;
-		private const int PinHover = 7;
-		private const int PinFocus = 8;
-		private const int PinFocusHover = 9;
-		private const int Close = 10;
-		private const int CloseHover = 11;
-		private const int CloseFocus = 12;
-		private const int CloseFocusHover = 13;
-
-
-		private static readonly List<Bitmap> CaptionImage =
-			new List<Bitmap>(
-				new[]
-				{
-					Resources.ToolCaptionHandle, Resources.ToolCaptionHandleFocus,
-					Resources.ToolCaptionContext, Resources.ToolCaptionContextHover, Resources.ToolCaptionContextFocus,
-					Resources.ToolCaptionContextFocusHover,
-					Resources.ToolCaptionPin, Resources.ToolCaptionPinHover, Resources.ToolCaptionPinFocus,
-					Resources.ToolCaptionPinFocusHover,
-					Resources.ToolCaptionClose, Resources.ToolCaptionCloseHover, Resources.ToolCaptionCloseFocus,
-					Resources.ToolCaptionCloseFocusHover
-				});
-
-		private readonly Rectangle[] _rcCaptions = new Rectangle[]
-		{
-			Rectangle.Empty,
-			Rectangle.Empty,
-			Rectangle.Empty,
-			Rectangle.Empty,
-			Rectangle.Empty,
-			Rectangle.Empty
-		};
+		private ToolWindowCaption _caption;
 
 		#region Constructor
 
 		public ToolWindow()
 		{
 			InitCaption();
+			Text = "ToolWindow1";
+			Dock = DockStyle.Left;
 			InitializeComponent();
 		}
 
@@ -73,44 +52,75 @@ namespace BinEdit.Controls
 
 		#region Override
 
+		/// <returns>
+		/// The text associated with this control.
+		/// </returns>
+		[Browsable(true), DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
+		public sealed override string Text
+		{
+			get { return base.Text; }
+			set { base.Text = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets which control borders are docked to its parent control and determines how a control is resized with its parent.
+		/// </summary>
+		/// <returns>
+		/// One of the <see cref="T:System.Windows.Forms.DockStyle"/> values. The default is <see cref="F:System.Windows.Forms.DockStyle.None"/>.
+		/// </returns>
+		/// <exception cref="T:System.ComponentModel.InvalidEnumArgumentException">The value assigned is not one of the <see cref="T:System.Windows.Forms.DockStyle"/> values. </exception>
+		[Browsable(true), DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
+		public sealed override DockStyle Dock
+		{
+			get { return base.Dock; }
+			set { base.Dock = value; }
+		}
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+				_caption.OnMouseDown(e);
+
+			base.OnMouseDown(e);
+		}
+
+		/// <summary>
+		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseUp"/> event.
+		/// </summary>
+		/// <param name="e">A <see cref="T:System.Windows.Forms.MouseEventArgs"/> that contains the event data. </param>
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+				_caption.OnMouseUp(e);
+
+			base.OnMouseUp(e);
+		}
+
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
-			if (_rcCaptions[0].Contains(e.Location))
-			{
-				if (_rcCaptions[5].Contains(e.Location))
-
-			}
+			_caption.OnMouseMove(e);
 
 			base.OnMouseMove(e);
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
-			var g = e.Graphics;
-			if (e.ClipRectangle.IntersectsWith(_rcCaptions[0]))
-				PaintCaption(g);
+			//	Paint Caption
+			_caption.OnPaint(e);
 		}
 
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
 
-			using (var g = CreateGraphics())
-			{
-				CalculateCaptionBound(g);
-				Invalidate(_rcCaptions[0]);	//	Force redraw of caption
-			}
+			_caption.OnResize(e);
 		}
 
 		protected override void OnTextChanged(EventArgs e)
 		{
 			base.OnTextChanged(e);
 
-			using (var g = CreateGraphics())
-			{
-				CalculateCaptionBound(g);
-				Invalidate(_rcCaptions[0]);
-			}
+			_caption.OnTextChanged(e);
 		}
 
 		protected override void WndProc(ref Message m)
@@ -118,6 +128,12 @@ namespace BinEdit.Controls
 			if (m.Msg == WmNcPaint)
 			{
 				PaintNcBorder();
+				return;
+			}
+
+			if (m.Msg == WmNcHitTest)
+			{
+				NcHitTest(ref m);
 				return;
 			}
 
@@ -129,73 +145,65 @@ namespace BinEdit.Controls
 
 		#region Methods
 
+		public static int HIWORD(int n)
+		{
+			return n >> 16 & ushort.MaxValue;
+		}
+
+		public static int HIWORD(IntPtr n)
+		{
+			return HIWORD((int)(long)n);
+		}
+
+		private static int LOWORD(int n)
+		{
+			return n & ushort.MaxValue;
+		}
+
+		private static int LOWORD(IntPtr n)
+		{
+			return LOWORD((int)(long)n);
+		}
+
+		private static void NcHitTest(ref Message m)
+		{
+			var x = LOWORD(m.LParam);
+			var y = HIWORD(m.LParam);
+		}
+
 		private void InitCaption()
 		{
-
-		}
-
-		private void CalculateCaptionBound(Graphics graphics)
-		{
-			_rcCaptions[0].X = 0;
-			_rcCaptions[0].Y = 0;
-			_rcCaptions[0].Width = ClientRectangle.Width;
-			_rcCaptions[0].Height = CaptionHeight;
-
-			var textSize = graphics.MeasureString(Text, CaptionFont);
-			_rcCaptions[1].X = 0;
-			_rcCaptions[1].Y = 0;
-			_rcCaptions[1].Width = (int)Math.Ceiling(textSize.Width) + LeftMargin + RightMargin;
-			_rcCaptions[1].Height = CaptionHeight;
-
-			const int rightEndMargin = 4;
-			var w = CaptionImage[CloseFocusHover].Width;
-			var h = CaptionImage[CloseFocusHover].Height;
-			var vCenter = (CaptionHeight - h) / 2;
-			_rcCaptions[5].X = _rcCaptions[0].Right - w - rightEndMargin;
-			_rcCaptions[5].Y = vCenter;
-			_rcCaptions[5].Width = w;
-			_rcCaptions[5].Height = h;
-
-			w = CaptionImage[PinFocusHover].Width;
-			h = CaptionImage[PinFocusHover].Height;
-			_rcCaptions[4].X = _rcCaptions[5].X - 1 - w;
-			_rcCaptions[4].Y = vCenter;
-			_rcCaptions[4].Width = w;
-			_rcCaptions[4].Height = h;
-
-			w = CaptionImage[ContextFocusHover].Width;
-			h = CaptionImage[ContextFocusHover].Height;
-			_rcCaptions[3].X = _rcCaptions[4].X - 1 - w;
-			_rcCaptions[3].Y = vCenter;
-			_rcCaptions[3].Width = w;
-			_rcCaptions[3].Height = h;
-
-			h = CaptionImage[HandleImg].Height;
-			vCenter = (CaptionHeight - h) / 2;
-			_rcCaptions[2].X = _rcCaptions[1].Right + 1;
-			_rcCaptions[2].Y = vCenter;
-			_rcCaptions[2].Width = _rcCaptions[3].X - rightEndMargin - _rcCaptions[2].X;
-			_rcCaptions[2].Height = h;
-		}
-
-		private void PaintCaption(Graphics g)
-		{
-			//	Draw background
-			var bgBrush = Focus() ? BrushBackgroundFocus : BrushBackground;
-			g.FillRectangle(bgBrush, _rcCaptions[0]);
-
-			//	Draw Text
-			var sf = new StringFormat
+			_caption = new ToolWindowCaption(this)
 			{
-				Alignment = StringAlignment.Center,
-				LineAlignment = StringAlignment.Center
+				HandleImages = new Image[] { Resources.ToolCaptionHandle, Resources.ToolCaptionHandleFocus }
 			};
-			var fgBrush = Focus() ? BrushForegroundForcus : BrushForeground;
-			g.DrawString(Text, CaptionFont, fgBrush, _rcCaptions[1], sf);
 
-			//	Draw Handle
-			var tb = new TextureBrush(CaptionImage[Focus() ? HandleFocus : HandleImg]);
-			g.FillRectangle(tb, _rcCaptions[2]);
+			var b = new ToolWindowCaptionButton(this, CaptionButtonType.CheckButton)
+			{
+				ImageList = new Image[]
+				{
+					Resources.ToolCaptionContext, Resources.ToolCaptionContextHover, Resources.ToolCaptionContextFocus,
+					Resources.ToolCaptionContextFocusHover, Resources.ToolCaptionContextChecked
+				}
+			};
+			_caption.AddButton(b);
+			b = new ToolWindowCaptionButton(this, CaptionButtonType.Button)
+			{
+				ImageList = new Image[]
+				{
+					Resources.ToolCaptionPin, Resources.ToolCaptionPinHover, Resources.ToolCaptionPinFocus, Resources.ToolCaptionPinFocusHover, Resources.ToolCaptionPinChecked
+				}
+			};
+			_caption.AddButton(b);
+			b = new ToolWindowCaptionButton(this, CaptionButtonType.Button)
+			{
+				ImageList = new Image[]
+				{
+					Resources.ToolCaptionClose, Resources.ToolCaptionCloseHover, Resources.ToolCaptionCloseFocus, Resources.ToolCaptionCloseFocusHover,
+					Resources.ToolCaptionCloseChecked
+				}
+			};
+			_caption.AddButton(b);
 		}
 
 		private void PaintNcBorder()
