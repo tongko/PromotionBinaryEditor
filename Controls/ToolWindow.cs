@@ -7,8 +7,11 @@ using System.Windows.Forms;
 
 namespace BinEdit.Controls
 {
+	[Designer(typeof(ToolWindowDesigner))]
 	public partial class ToolWindow : UserControl
 	{
+		#region Fields
+
 		private static readonly Pen BorderPen = new Pen(Color.FromArgb(204, 206, 219));
 		private const int WmNcPaint = 0x85;
 		private const int WmNcHitTest = 0x0084;
@@ -36,15 +39,34 @@ namespace BinEdit.Controls
 		private const int HtHelp = 21;
 
 		private ToolWindowCaption _caption;
+		private Bitmap _backBuffer;
+
+		#endregion
+
 
 		#region Constructor
 
 		public ToolWindow()
 		{
+			SetStyle(ControlStyles.AllPaintingInWmPaint
+				| ControlStyles.UserPaint
+				| ControlStyles.DoubleBuffer, true);
 			InitCaption();
 			Text = "ToolWindow1";
-			Dock = DockStyle.Left;
+			//Dock = DockStyle.Left;
 			InitializeComponent();
+		}
+
+		#endregion
+
+
+		#region Properties
+
+		new private BorderStyle BorderStyle { get; set; }
+
+		new public Rectangle ClientRectangle
+		{
+			get { return new Rectangle(4, 4, Width - 5, Height - 5); }
 		}
 
 		#endregion
@@ -55,7 +77,12 @@ namespace BinEdit.Controls
 		/// <returns>
 		/// The text associated with this control.
 		/// </returns>
-		[Browsable(true), DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
+		[
+		Category("Appearance"),
+		Browsable(true),
+		DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible),
+		DefaultValue("ToolWindow")
+		]
 		public sealed override string Text
 		{
 			get { return base.Text; }
@@ -74,6 +101,25 @@ namespace BinEdit.Controls
 		{
 			get { return base.Dock; }
 			set { base.Dock = value; }
+		}
+
+		protected override void OnControlAdded(ControlEventArgs e)
+		{
+			base.OnControlAdded(e);
+
+			if (_caption.Bounds.Contains(e.Control.Location))
+				e.Control.Location = new Point(e.Control.Location.X, _caption.Bounds.Height);
+		}
+
+		/// <summary>
+		/// Raises the <see cref="E:System.Windows.Forms.Control.LostFocus"/> event.
+		/// </summary>
+		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
+		protected override void OnLostFocus(EventArgs e)
+		{
+			base.OnLostFocus(e);
+
+			_caption.OnLostFocus();
 		}
 
 		protected override void OnMouseDown(MouseEventArgs e)
@@ -105,15 +151,36 @@ namespace BinEdit.Controls
 
 		protected override void OnPaint(PaintEventArgs e)
 		{
+			if (_backBuffer == null)
+				_backBuffer = new Bitmap(Width, Height);
+
+			var g = Graphics.FromImage(_backBuffer);
+
+			//	draw border
+			PaintNcBorder(g);
+
 			//	Paint Caption
-			_caption.OnPaint(e);
+			_caption.OnPaint(e, g);
+
+			g.Dispose();
+
+			e.Graphics.DrawImageUnscaled(_backBuffer, 0, 0);
 		}
 
-		protected override void OnResize(EventArgs e)
+		/// <summary>
+		/// Raises the <see cref="E:System.Windows.Forms.Control.SizeChanged"/> event.
+		/// </summary>
+		/// <param name="e">An <see cref="T:System.EventArgs"/> that contains the event data. </param>
+		protected override void OnSizeChanged(EventArgs e)
 		{
-			base.OnResize(e);
+			if (_backBuffer != null)
+			{
+				_backBuffer.Dispose();
+				_backBuffer = null;
+			}
 
 			_caption.OnResize(e);
+			base.OnSizeChanged(e);
 		}
 
 		protected override void OnTextChanged(EventArgs e)
@@ -125,12 +192,6 @@ namespace BinEdit.Controls
 
 		protected override void WndProc(ref Message m)
 		{
-			if (m.Msg == WmNcPaint)
-			{
-				PaintNcBorder();
-				return;
-			}
-
 			if (m.Msg == WmNcHitTest)
 			{
 				NcHitTest(ref m);
@@ -165,10 +226,15 @@ namespace BinEdit.Controls
 			return LOWORD((int)(long)n);
 		}
 
-		private static void NcHitTest(ref Message m)
+		private void NcHitTest(ref Message m)
 		{
 			var x = LOWORD(m.LParam);
 			var y = HIWORD(m.LParam);
+
+			var pt = PointToClient(new Point(x, y));
+
+			//if (_caption.Bounds.Contains(pt))
+			m.Result = new IntPtr(HtClient);
 		}
 
 		private void InitCaption()
@@ -206,25 +272,13 @@ namespace BinEdit.Controls
 			_caption.AddButton(b);
 		}
 
-		private void PaintNcBorder()
+		private void PaintNcBorder(Graphics g)
 		{
-			if (BorderStyle == BorderStyle.None) return;
+			g.Clear(BackColor);	//	Background
 
-			//	Obtain windows DC
-			var hDc = GetDCEx(
-				Handle,
-				IntPtr.Zero,
-				DeviceContextValues.Window | DeviceContextValues.Cache | DeviceContextValues.UseStyle);
-			if (hDc == IntPtr.Zero)
-				throw new Win32Exception(Marshal.GetLastWin32Error());
-			using (var g = Graphics.FromHdc(hDc))
-			{
-				var rcBorder = new Rectangle(0, 0, Width - 1, Height - 1);
-				g.DrawRectangle(BorderPen, rcBorder);
-			}
-
-			if (hDc != IntPtr.Zero)
-				ReleaseDC(Handle, hDc);
+			const int margin = 3;
+			var rcBorder = new Rectangle(margin, margin, Width - margin - 1, Height - margin - 1);
+			g.DrawRectangle(BorderPen, rcBorder);
 		}
 
 		#endregion
