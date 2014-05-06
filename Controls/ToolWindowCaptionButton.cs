@@ -12,6 +12,8 @@ namespace BinEdit.Controls
 	public class ToolWindowCaptionButton
 	{
 		private Rectangle _bounds;
+		private bool _highlight;
+		private bool _checked;
 
 		public ToolWindowCaptionButton(ToolWindow parent, CaptionButtonType buttonType)
 		{
@@ -26,9 +28,25 @@ namespace BinEdit.Controls
 
 		public Rectangle Bounds { get { return _bounds; } }
 
-		public bool Highlight { get; set; }
+		public bool Highlight
+		{
+			get { return _highlight; }
+			set
+			{
+				_highlight = value;
+				Parent.Invalidate(_bounds);
+			}
+		}
 
-		public bool Checked { get; set; }
+		public bool Checked
+		{
+			get { return _checked; }
+			set
+			{
+				_checked = value;
+				Parent.Invalidate(_bounds);
+			}
+		}
 
 		public ContextMenu ContextMenu { get; set; }
 
@@ -62,7 +80,7 @@ namespace BinEdit.Controls
 				return ImageList[4];
 			var index = 0;
 
-			if (Parent.Focus()) index += 2;
+			if (Parent.IsFocused) index += 2;
 			if (Highlight) index++;
 
 			return ImageList[index];

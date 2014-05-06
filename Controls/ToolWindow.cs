@@ -1,13 +1,13 @@
 ﻿using BinEdit.Controls.Properties;
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace BinEdit.Controls
 {
-	[Designer(typeof(ToolWindowDesigner))]
+	[Designer(typeof(ToolWindowDesigner), typeof(IDesigner))]
 	public partial class ToolWindow : UserControl
 	{
 		#region Fields
@@ -52,8 +52,8 @@ namespace BinEdit.Controls
 				| ControlStyles.UserPaint
 				| ControlStyles.DoubleBuffer, true);
 			InitCaption();
-			Text = "ToolWindow1";
-			//Dock = DockStyle.Left;
+			Dock = DockStyle.Left;
+			Text = "ToolWindow";
 			InitializeComponent();
 		}
 
@@ -66,8 +66,10 @@ namespace BinEdit.Controls
 
 		new public Rectangle ClientRectangle
 		{
-			get { return new Rectangle(4, 4, Width - 5, Height - 5); }
+			get { return new Rectangle(4, 4, Width - 8, Height - 8); }
 		}
+
+		public bool IsFocused { get; private set; }
 
 		#endregion
 
@@ -105,10 +107,24 @@ namespace BinEdit.Controls
 
 		protected override void OnControlAdded(ControlEventArgs e)
 		{
-			base.OnControlAdded(e);
-
 			if (_caption.Bounds.Contains(e.Control.Location))
 				e.Control.Location = new Point(e.Control.Location.X, _caption.Bounds.Height);
+
+			e.Control.GotFocus += ControlOnGotFocus;
+			e.Control.LostFocus += ControlOnLostFocus;
+			base.OnControlAdded(e);
+		}
+
+		private void ControlOnLostFocus(object sender, EventArgs e)
+		{
+			IsFocused = false;
+			_caption.OnFocusChanged();
+		}
+
+		private void ControlOnGotFocus(object sender, EventArgs eventArgs)
+		{
+			IsFocused = true;
+			_caption.OnFocusChanged();
 		}
 
 		/// <summary>
@@ -119,27 +135,14 @@ namespace BinEdit.Controls
 		{
 			base.OnLostFocus(e);
 
-			_caption.OnLostFocus();
+			_caption.OnFocusChanged();
 		}
 
-		protected override void OnMouseDown(MouseEventArgs e)
+		protected override void OnGotFocus(EventArgs e)
 		{
-			if (e.Button == MouseButtons.Left)
-				_caption.OnMouseDown(e);
+			base.OnGotFocus(e);
 
-			base.OnMouseDown(e);
-		}
-
-		/// <summary>
-		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseUp"/> event.
-		/// </summary>
-		/// <param name="e">A <see cref="T:System.Windows.Forms.MouseEventArgs"/> that contains the event data. </param>
-		protected override void OnMouseUp(MouseEventArgs e)
-		{
-			if (e.Button == MouseButtons.Left)
-				_caption.OnMouseUp(e);
-
-			base.OnMouseUp(e);
+			_caption.OnFocusChanged();
 		}
 
 		protected override void OnMouseMove(MouseEventArgs e)
@@ -277,20 +280,10 @@ namespace BinEdit.Controls
 			g.Clear(BackColor);	//	Background
 
 			const int margin = 3;
-			var rcBorder = new Rectangle(margin, margin, Width - margin - 1, Height - margin - 1);
+			var rc = ClientRectangle;
+			var rcBorder = new Rectangle(rc.X - 1, rc.Y - 1, rc.Width + 1, rc.Height + 1);
 			g.DrawRectangle(BorderPen, rcBorder);
 		}
-
-		#endregion
-
-
-		#region Unsafe Code
-
-		[DllImport("user32.dll")]
-		static extern IntPtr GetDCEx(IntPtr hWnd, IntPtr hrgnClip, DeviceContextValues flags);
-
-		[DllImport("user32.dll")]
-		static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDc);
 
 		#endregion
 	}

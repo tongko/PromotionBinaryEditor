@@ -17,13 +17,12 @@ namespace BinEdit.Controls
 		private static readonly Brush BrushForeground = new SolidBrush(Color.Black);
 		private static readonly Brush BrushForegroundForcus = new SolidBrush(Color.White);
 
+		private ToolTip _toolTip;
 		private Rectangle _capBounds;
 		private Rectangle _bounds;
 		private Rectangle _textBounds;
 		private Rectangle _handleBounds;
 		private readonly List<ToolWindowCaptionButton> _buttons;
-
-		private ToolWindowCaptionButton _prevButton;
 
 		public ToolWindowCaption(ToolWindow parent)
 		{
@@ -32,6 +31,7 @@ namespace BinEdit.Controls
 			_bounds = new Rectangle(0, 0, 0, 0);
 			_textBounds = new Rectangle(0, 0, 0, 0);
 			_handleBounds = new Rectangle(0, 0, 0, 0);
+			_toolTip = new ToolTip { AutoPopDelay = 5000, InitialDelay = 1000, ReshowDelay = 500, ShowAlways = true };
 		}
 
 		public ToolWindow Parent { get; set; }
@@ -58,7 +58,6 @@ namespace BinEdit.Controls
 			if (button == null) return;
 
 			button.Checked = true;
-			Parent.Invalidate(button.Bounds);
 		}
 
 		public virtual void OnMouseUp(MouseEventArgs e)
@@ -66,9 +65,9 @@ namespace BinEdit.Controls
 			if (!_bounds.Contains(e.Location)) return;
 
 			var button = _buttons.FirstOrDefault(b => b.Bounds.Contains(e.Location));
-			if (button == null) return;
+			if (button == null || !button.Checked) return;
 
-			button.Checked = button.Highlight = false;
+			button.Checked = false;
 
 			Parent.Invalidate(button.Bounds);
 		}
@@ -80,21 +79,18 @@ namespace BinEdit.Controls
 			var button = _buttons.FirstOrDefault(b => b.Bounds.Contains(e.Location));
 			if (button == null)
 			{
-				button = _buttons.FirstOrDefault(b => b.Checked || b.Highlight);
+				button = _buttons.FirstOrDefault(b => b.Highlight);
 				if (button == null) return;
 
-				button.Checked = button.Highlight = false;
-				//_prevButton = null;
+				button.Highlight = false;
 			}
 			else
 			{
-				//if (button == _prevButton) return;
-
 				button.Highlight = true;
-				//_prevButton = button;
+				var buttons = _buttons.Where(b => b.Highlight);
+				foreach (var b in buttons.Where(b => b != button))
+					b.Highlight = false;
 			}
-
-			Parent.Invalidate(button.Bounds);
 		}
 
 		public virtual void OnTextChanged(EventArgs e)
@@ -113,7 +109,7 @@ namespace BinEdit.Controls
 			Parent.Invalidate(_capBounds);
 		}
 
-		public virtual void OnLostFocus()
+		public virtual void OnFocusChanged()
 		{
 			Parent.Invalidate(_capBounds);
 		}
@@ -122,8 +118,7 @@ namespace BinEdit.Controls
 		{
 			if (!e.ClipRectangle.IntersectsWith(_bounds)) return;
 
-			//var g = e.Graphics;
-			var focus = Parent.Focus();
+			var focus = Parent.IsFocused;
 
 			//	Draw background
 			var bgBrush = focus ? BrushBackgroundFocus : BrushBackground;
