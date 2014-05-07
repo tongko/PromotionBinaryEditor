@@ -18,7 +18,6 @@ namespace BinEdit.Controls
 		private static readonly Brush BrushForegroundForcus = new SolidBrush(Color.White);
 
 		private ToolTip _toolTip;
-		private Rectangle _capBounds;
 		private Rectangle _bounds;
 		private Rectangle _textBounds;
 		private Rectangle _handleBounds;
@@ -98,20 +97,20 @@ namespace BinEdit.Controls
 			using (var g = Parent.CreateGraphics())
 				CalculateBounds(g);
 
-			Parent.Invalidate(_capBounds);
+			Parent.Invalidate(_bounds);
 		}
 
 		public virtual void OnResize(EventArgs e)
 		{
 			CalculateBounds();
 
-			_capBounds = new Rectangle(0, 0, Parent.Width, CaptionHeight);
-			Parent.Invalidate(_capBounds);
+			CalculateBounds();
+			Parent.Invalidate(_bounds);
 		}
 
 		public virtual void OnFocusChanged()
 		{
-			Parent.Invalidate(_capBounds);
+			Parent.Invalidate(_bounds);
 		}
 
 		public virtual void OnPaint(PaintEventArgs e, Graphics g)

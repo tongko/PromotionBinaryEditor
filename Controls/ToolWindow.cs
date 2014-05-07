@@ -1,4 +1,5 @@
-﻿using BinEdit.Controls.Properties;
+﻿using BinEdit.Controls.Design;
+using BinEdit.Controls.Properties;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -8,6 +9,8 @@ using System.Windows.Forms;
 namespace BinEdit.Controls
 {
 	[Designer(typeof(ToolWindowDesigner), typeof(IDesigner))]
+	[ToolboxItem(true)]
+	[ToolboxBitmap(typeof(ToolWindow), "Resources.ToolWindow.bmp")]
 	public partial class ToolWindow : UserControl
 	{
 		#region Fields
@@ -40,6 +43,7 @@ namespace BinEdit.Controls
 
 		private ToolWindowCaption _caption;
 		private Bitmap _backBuffer;
+		private Rectangle _dispRect = new Rectangle(0, 0, 0, 0);
 
 		#endregion
 
@@ -76,6 +80,17 @@ namespace BinEdit.Controls
 
 		#region Override
 
+		/// <summary>
+		/// Gets the rectangle that represents the virtual display area of the control.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="T:System.Drawing.Rectangle"/> that represents the display area of the control.
+		/// </returns>
+		public override Rectangle DisplayRectangle
+		{
+			get { return _dispRect; }
+		}
+
 		/// <returns>
 		/// The text associated with this control.
 		/// </returns>
@@ -107,12 +122,19 @@ namespace BinEdit.Controls
 
 		protected override void OnControlAdded(ControlEventArgs e)
 		{
-			if (_caption.Bounds.Contains(e.Control.Location))
-				e.Control.Location = new Point(e.Control.Location.X, _caption.Bounds.Height);
-
 			e.Control.GotFocus += ControlOnGotFocus;
 			e.Control.LostFocus += ControlOnLostFocus;
+			e.Control.LocationChanged += ControlOnLocationChanged;
 			base.OnControlAdded(e);
+		}
+
+		private void ControlOnLocationChanged(object sender, EventArgs e)
+		{
+			var ctrl = sender as Control;
+			if (ctrl == null) return;
+
+			if (_caption.Bounds.IntersectsWith(ctrl.Bounds))
+				ctrl.Top = _caption.Bounds.X + _caption.Bounds.Height + 1;
 		}
 
 		private void ControlOnLostFocus(object sender, EventArgs e)
@@ -124,6 +146,22 @@ namespace BinEdit.Controls
 		private void ControlOnGotFocus(object sender, EventArgs eventArgs)
 		{
 			IsFocused = true;
+			_caption.OnFocusChanged();
+		}
+
+		public void SetFocus(bool focus)
+		{
+			if (focus)
+			{
+				base.OnGotFocus(EventArgs.Empty);
+				IsFocused = true;
+			}
+			else
+			{
+				base.OnLostFocus(EventArgs.Empty);
+				IsFocused = false;
+			}
+
 			_caption.OnFocusChanged();
 		}
 
@@ -183,6 +221,11 @@ namespace BinEdit.Controls
 			}
 
 			_caption.OnResize(e);
+			_dispRect.X = Left;
+			_dispRect.Y = Top + _caption.Bounds.Height;
+			_dispRect.Width = Width;
+			_dispRect.Height = Height - _caption.Bounds.Height;
+
 			base.OnSizeChanged(e);
 		}
 
@@ -209,12 +252,17 @@ namespace BinEdit.Controls
 
 		#region Methods
 
-		public static int HIWORD(int n)
+		public Rectangle GetCaptionBounds()
+		{
+			return _caption == null ? Rectangle.Empty : _caption.Bounds;
+		}
+
+		private static int HIWORD(int n)
 		{
 			return n >> 16 & ushort.MaxValue;
 		}
 
-		public static int HIWORD(IntPtr n)
+		private static int HIWORD(IntPtr n)
 		{
 			return HIWORD((int)(long)n);
 		}
@@ -279,7 +327,6 @@ namespace BinEdit.Controls
 		{
 			g.Clear(BackColor);	//	Background
 
-			const int margin = 3;
 			var rc = ClientRectangle;
 			var rcBorder = new Rectangle(rc.X - 1, rc.Y - 1, rc.Width + 1, rc.Height + 1);
 			g.DrawRectangle(BorderPen, rcBorder);

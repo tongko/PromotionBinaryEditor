@@ -30,8 +30,8 @@
 		{
 			this.checkBox1 = new System.Windows.Forms.CheckBox();
 			this.toolWindow1 = new BinEdit.Controls.ToolWindow();
-			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.button1 = new System.Windows.Forms.Button();
+			this.checkBox2 = new System.Windows.Forms.CheckBox();
 			this.toolWindow1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -58,6 +58,15 @@
 			this.toolWindow1.TabIndex = 2;
 			this.toolWindow1.Text = "Properties";
 			// 
+			// button1
+			// 
+			this.button1.Location = new System.Drawing.Point(95, 243);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(75, 23);
+			this.button1.TabIndex = 1;
+			this.button1.Text = "button1";
+			this.button1.UseVisualStyleBackColor = true;
+			// 
 			// checkBox2
 			// 
 			this.checkBox2.AutoSize = true;
@@ -67,15 +76,6 @@
 			this.checkBox2.TabIndex = 0;
 			this.checkBox2.Text = "checkBox2";
 			this.checkBox2.UseVisualStyleBackColor = true;
-			// 
-			// button1
-			// 
-			this.button1.Location = new System.Drawing.Point(95, 243);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(75, 23);
-			this.button1.TabIndex = 1;
-			this.button1.Text = "button1";
-			this.button1.UseVisualStyleBackColor = true;
 			// 
 			// Form1
 			// 
