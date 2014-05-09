@@ -203,5 +203,12 @@ namespace BinEdit.Controls.Design
 
 			}
 		}
+
+		protected override void PreFilterProperties(IDictionary properties)
+		{
+			base.PostFilterProperties(properties);
+
+			properties.Remove("BorderStyle");
+		}
 	}
 }

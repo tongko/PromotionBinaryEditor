@@ -8,6 +8,8 @@ namespace BinEdit.Controls
 {
 	public class ToolWindowCaption
 	{
+		#region Fields
+
 		private const int Margin = 5;
 		private const int CaptionHeight = 21;
 
@@ -17,11 +19,16 @@ namespace BinEdit.Controls
 		private static readonly Brush BrushForeground = new SolidBrush(Color.Black);
 		private static readonly Brush BrushForegroundForcus = new SolidBrush(Color.White);
 
-		private ToolTip _toolTip;
+		//		private ToolTip _toolTip;
 		private Rectangle _bounds;
 		private Rectangle _textBounds;
 		private Rectangle _handleBounds;
 		private readonly List<ToolWindowCaptionButton> _buttons;
+
+		#endregion
+
+
+		#region Constructor
 
 		public ToolWindowCaption(ToolWindow parent)
 		{
@@ -30,8 +37,13 @@ namespace BinEdit.Controls
 			_bounds = new Rectangle(0, 0, 0, 0);
 			_textBounds = new Rectangle(0, 0, 0, 0);
 			_handleBounds = new Rectangle(0, 0, 0, 0);
-			_toolTip = new ToolTip { AutoPopDelay = 5000, InitialDelay = 1000, ReshowDelay = 500, ShowAlways = true };
+			//			_toolTip = new ToolTip { AutoPopDelay = 5000, InitialDelay = 1000, ReshowDelay = 500, ShowAlways = true };
 		}
+
+		#endregion
+
+
+		#region Properties
 
 		public ToolWindow Parent { get; set; }
 
@@ -43,6 +55,11 @@ namespace BinEdit.Controls
 		public Image[] HandleImages { get; set; }
 
 		public Rectangle Bounds { get { return _bounds; } }
+
+		#endregion
+
+
+		#region Methods
 
 		public void AddButton(ToolWindowCaptionButton button)
 		{
@@ -188,5 +205,7 @@ namespace BinEdit.Controls
 			_handleBounds.Width = _buttons[0].Bounds.X - rightEndMargin - _handleBounds.X;
 			_handleBounds.Height = h;
 		}
+
+		#endregion
 	}
 }

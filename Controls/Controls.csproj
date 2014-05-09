@@ -61,6 +61,7 @@
     </Compile>
     <Compile Include="ToolWindowCaption.cs" />
     <Compile Include="ToolWindowCaptionButton.cs" />
+    <Compile Include="ToolWindowImageList.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

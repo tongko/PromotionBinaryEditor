@@ -15,6 +15,7 @@ namespace BinEdit.Controls
 	{
 		#region Fields
 
+		private static readonly Pen BgPen = new Pen(Color.FromArgb(238, 238, 242), 3);
 		private static readonly Pen BorderPen = new Pen(Color.FromArgb(204, 206, 219));
 		private const int WmNcPaint = 0x85;
 		private const int WmNcHitTest = 0x0084;
@@ -44,6 +45,7 @@ namespace BinEdit.Controls
 		private ToolWindowCaption _caption;
 		private Bitmap _backBuffer;
 		private Rectangle _dispRect = new Rectangle(0, 0, 0, 0);
+		private Region _rgBorder = new Region();
 
 		#endregion
 
@@ -66,8 +68,6 @@ namespace BinEdit.Controls
 
 		#region Properties
 
-		new private BorderStyle BorderStyle { get; set; }
-
 		new public Rectangle ClientRectangle
 		{
 			get { return new Rectangle(4, 4, Width - 8, Height - 8); }
@@ -77,6 +77,8 @@ namespace BinEdit.Controls
 
 		#endregion
 
+
+		#region Methods
 
 		#region Override
 
@@ -226,6 +228,12 @@ namespace BinEdit.Controls
 			_dispRect.Width = Width;
 			_dispRect.Height = Height - _caption.Bounds.Height;
 
+			if (_rgBorder == null)
+				_rgBorder = new Region();
+			_rgBorder.MakeEmpty();
+			_rgBorder.Intersect(Bounds);
+			_rgBorder.Xor(ClientRectangle);
+
 			base.OnSizeChanged(e);
 		}
 
@@ -248,9 +256,6 @@ namespace BinEdit.Controls
 		}
 
 		#endregion
-
-
-		#region Methods
 
 		public Rectangle GetCaptionBounds()
 		{
@@ -326,6 +331,28 @@ namespace BinEdit.Controls
 		private void PaintNcBorder(Graphics g)
 		{
 			g.Clear(BackColor);	//	Background
+			//g.FillRegion(BgBrush, _rgBorder);
+			var pt = new Point(0, 1);
+			var pt2 = new Point(Bounds.Width, 1);
+			g.DrawLine(BgPen, pt, pt2);
+
+			pt.X = Bounds.Width - 2;
+			pt.Y = 0;
+			pt2.X = pt.X;
+			pt2.Y = Bounds.Height;
+			g.DrawLine(BgPen, pt, pt2);
+
+			pt.X = 0;
+			pt.Y = Bounds.Height - 2;
+			pt2.X = Bounds.Width - 2;
+			pt2.Y = pt.Y;
+			g.DrawLine(BgPen, pt, pt2);
+
+			pt.X = 1;
+			pt.Y = 0;
+			pt2.X = 1;
+			pt2.Y = Bounds.Height;
+			g.DrawLine(BgPen, pt, pt2);
 
 			var rc = ClientRectangle;
 			var rcBorder = new Rectangle(rc.X - 1, rc.Y - 1, rc.Width + 1, rc.Height + 1);
