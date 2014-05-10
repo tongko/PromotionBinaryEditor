@@ -7,13 +7,13 @@ namespace BinEdit.Controls.Design
 {
 	public class CaptionGlyph : Glyph
 	{
-		private readonly ToolWindow _control;
+		private readonly ToolWindowOld _control;
 		private readonly BehaviorService _behaviorSvc;
 
 		public CaptionGlyph(BehaviorService behaviorSvc, Control control)
 			: base(new PreventDropBehavior())
 		{
-			_control = control as ToolWindow;
+			_control = control as ToolWindowOld;
 			_behaviorSvc = behaviorSvc;
 			if (control == null)
 				throw new ArgumentException("control");

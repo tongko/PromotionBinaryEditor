@@ -53,15 +53,33 @@
     </Compile>
     <Compile Include="Design\ToolWindow.ControlDesigner.cs">
     </Compile>
-    <Compile Include="ToolWindow.cs">
+    <Compile Include="ToolWindowOld.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ToolWindow.Designer.cs">
-      <DependentUpon>ToolWindow.cs</DependentUpon>
+    <Compile Include="ToolWindowOld.Designer.cs">
+      <DependentUpon>ToolWindowOld.cs</DependentUpon>
     </Compile>
     <Compile Include="ToolWindowCaption.cs" />
     <Compile Include="ToolWindowCaptionButton.cs" />
     <Compile Include="ToolWindowImageList.cs" />
+    <Compile Include="ToolWindow\ToolWindow.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ToolWindow\ToolWindow.Designer.cs">
+      <DependentUpon>ToolWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ToolWindow\ToolWindow.Events.cs">
+      <DependentUpon>ToolWindow.cs</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ToolWindow\ToolWindow.Methods.cs">
+      <DependentUpon>ToolWindow.cs</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ToolWindow\ToolWindow.Properties.cs">
+      <DependentUpon>ToolWindow.cs</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -69,8 +87,8 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ToolWindow.resx">
-      <DependentUpon>ToolWindow.cs</DependentUpon>
+    <EmbeddedResource Include="ToolWindowOld.resx">
+      <DependentUpon>ToolWindowOld.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

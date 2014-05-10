@@ -15,7 +15,7 @@ namespace BinEdit.Controls
 		private bool _highlight;
 		private bool _checked;
 
-		public ToolWindowCaptionButton(ToolWindow parent, CaptionButtonType buttonType)
+		public ToolWindowCaptionButton(ToolWindowOld parent, CaptionButtonType buttonType)
 		{
 			Parent = parent;
 			ButtonType = buttonType;
@@ -24,7 +24,7 @@ namespace BinEdit.Controls
 
 		public CaptionButtonType ButtonType { get; private set; }
 
-		public ToolWindow Parent { get; set; }
+		public ToolWindowOld Parent { get; set; }
 
 		public Rectangle Bounds { get { return _bounds; } }
 

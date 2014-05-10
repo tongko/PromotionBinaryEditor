@@ -30,9 +30,9 @@ namespace BinEdit.Controls.Design
 			}
 		}
 
-		protected ToolWindow DesigningControl
+		protected ToolWindowOld DesigningControl
 		{
-			get { return (ToolWindow)Control; }
+			get { return (ToolWindowOld)Control; }
 		}
 
 		/// <summary>
@@ -90,7 +90,7 @@ namespace BinEdit.Controls.Design
 		/// <param name="point">A <see cref="T:System.Drawing.Point"/> indicating the position at which the mouse was clicked, in screen coordinates. </param>
 		protected override bool GetHitTest(Point point)
 		{
-			var pc = (ToolWindow)Control;
+			var pc = (ToolWindowOld)Control;
 
 			if (!_parentSelected) return false;
 
@@ -186,7 +186,7 @@ namespace BinEdit.Controls.Design
 			var svc = (ISelectionService)GetService(typeof(ISelectionService));
 			if (svc == null) return;
 
-			var comp = (ToolWindow)Component;
+			var comp = (ToolWindowOld)Component;
 			var selected = svc.GetSelectedComponents();
 			foreach (var sel in selected)
 			{

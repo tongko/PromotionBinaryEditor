@@ -30,7 +30,7 @@ namespace BinEdit.Controls
 
 		#region Constructor
 
-		public ToolWindowCaption(ToolWindow parent)
+		public ToolWindowCaption(ToolWindowOld parent)
 		{
 			Parent = parent;
 			_buttons = new List<ToolWindowCaptionButton>();
@@ -45,7 +45,7 @@ namespace BinEdit.Controls
 
 		#region Properties
 
-		public ToolWindow Parent { get; set; }
+		public ToolWindowOld Parent { get; set; }
 
 		/// <summary>
 		///	Handle image must have 2 bitmap, first bitmap

@@ -10,8 +10,8 @@ namespace BinEdit.Controls
 {
 	[Designer(typeof(ToolWindowDesigner), typeof(IDesigner))]
 	[ToolboxItem(true)]
-	[ToolboxBitmap(typeof(ToolWindow), "Resources.ToolWindow.bmp")]
-	public partial class ToolWindow : UserControl
+	[ToolboxBitmap(typeof(ToolWindowOld), "Resources.ToolWindow.bmp")]
+	public partial class ToolWindowOld : UserControl
 	{
 		#region Fields
 
@@ -52,7 +52,7 @@ namespace BinEdit.Controls
 
 		#region Constructor
 
-		public ToolWindow()
+		public ToolWindowOld()
 		{
 			SetStyle(ControlStyles.AllPaintingInWmPaint
 				| ControlStyles.UserPaint
@@ -66,7 +66,16 @@ namespace BinEdit.Controls
 		#endregion
 
 
+		#region Events and Delegates
+
+
+		#endregion
+
+
 		#region Properties
+
+		[Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
+		new public BorderStyle BorderStyle { get; set; }
 
 		new public Rectangle ClientRectangle
 		{
@@ -174,14 +183,14 @@ namespace BinEdit.Controls
 		protected override void OnLostFocus(EventArgs e)
 		{
 			base.OnLostFocus(e);
-
+			IsFocused = false;
 			_caption.OnFocusChanged();
 		}
 
 		protected override void OnGotFocus(EventArgs e)
 		{
 			base.OnGotFocus(e);
-
+			IsFocused = true;
 			_caption.OnFocusChanged();
 		}
 
@@ -190,6 +199,25 @@ namespace BinEdit.Controls
 			_caption.OnMouseMove(e);
 
 			base.OnMouseMove(e);
+		}
+
+		/// <param name="e">A <see cref="T:System.Windows.Forms.MouseEventArgs"/> that contains the event data. </param>
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			lblEvent.Text = "OnMouseDown";
+			_caption.OnMouseDown(e);
+			base.OnMouseDown(e);
+		}
+
+		/// <summary>
+		/// Raises the <see cref="E:System.Windows.Forms.Control.MouseUp"/> event.
+		/// </summary>
+		/// <param name="e">A <see cref="T:System.Windows.Forms.MouseEventArgs"/> that contains the event data. </param>
+		protected override void OnMouseUp(MouseEventArgs e)
+		{
+			lblEvent.Text = "OnMouseUp";
+			_caption.OnMouseUp(e);
+			base.OnMouseUp(e);
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
